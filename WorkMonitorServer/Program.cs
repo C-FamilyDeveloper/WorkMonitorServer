@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Net.Mail;
-using WorkMonitorServer.Models.DataContextes;
+using WorkMonitorServer.Models.DataContexts;
 using WorkMonitorServer.Models.DataEntities;
 using WorkMonitorServer.Models.Interfaces;
 using WorkMonitorServer.Models.Repositories;

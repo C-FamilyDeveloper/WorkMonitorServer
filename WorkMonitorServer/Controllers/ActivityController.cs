@@ -46,6 +46,5 @@ namespace WorkMonitorServer.Controllers
         {
             return await activityrepository.Get();
         }*/
-
     }
 }

@@ -21,12 +21,6 @@ namespace WorkMonitorServer.Controllers
             this.screenrepository = screenrepository;
             this.clientrepository = clientrepository;
         }
-
-        /*[HttpPost]
-        public async Task Post([FromBody] WorkerInfo workerInfo)
-        {
-           
-        }*/
         [HttpPost]
         public async Task Post([FromBody] Screenshot screenshot)
         {
@@ -41,7 +35,6 @@ namespace WorkMonitorServer.Controllers
             await screenrepository.Add(new Screen { Image = screenshot.Image, ScreenedClient = client,
                 ScreenshotDateTime = screenshot.ScreenshotDateTime });
             await screenrepository.Save();
-            //ImageSaverService.Save((await screenrepository.Get()).First().Image);
         }
         /*[HttpGet]
         public IEnumerable<> Get()

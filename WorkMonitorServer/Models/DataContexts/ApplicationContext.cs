@@ -4,7 +4,7 @@ using System.Net.Mail;
 using System.Reflection.Emit;
 using WorkMonitorServer.Models.DataEntities;
 
-namespace WorkMonitorServer.Models.DataContextes
+namespace WorkMonitorServer.Models.DataContexts
 {
     public class ApplicationContext : DbContext
     {

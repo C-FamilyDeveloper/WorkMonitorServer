@@ -3,7 +3,7 @@ using System.Drawing.Imaging;
 
 namespace WorkMonitorServer.Models.Services
 {
-    #pragma warning disable CA1416 // Validate platform compatibility
+    #pragma warning disable CA1416 
     public static class ImageSaverService
     {
         public static void Save(byte[] imageData)

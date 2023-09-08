@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkMonitorServer.Models.DataContextes;
+using WorkMonitorServer.Models.DataContexts;
 using WorkMonitorServer.Models.DataEntities;
 using WorkMonitorServer.Models.Interfaces;
 
