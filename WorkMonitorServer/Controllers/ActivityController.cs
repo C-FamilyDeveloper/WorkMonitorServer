@@ -28,7 +28,6 @@ namespace WorkMonitorServer.Controllers
             if (!result.Any())
             {
                 await clientrepository.Add(new Client { Name = workerInfo.Worker });
-                await clientrepository.Save();
             }
             Client client = (await clientrepository.Get()).Where(i => i.Name == workerInfo.Worker).First();
             await activityrepository.Add(new Activity

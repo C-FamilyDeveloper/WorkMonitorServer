@@ -29,7 +29,6 @@ namespace WorkMonitorServer.Controllers
             if (!result.Any())
             {
                 await clientrepository.Add(new Client { Name = screenshot.ClientName });
-                await clientrepository.Save();
             }
             Client client = (await clientrepository.Get()).Where(i => i.Name == screenshot.ClientName).First();
             await screenrepository.Add(new Screen { Image = screenshot.Image, ScreenedClient = client,
