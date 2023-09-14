@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WorkMonitorServer.Models.DataContexts;
 using WorkMonitorServer.Models.DataEntities;
-using WorkMonitorServer.Models.Interfaces;
 using WorkMonitorTypes.Requests;
 
 namespace WorkMonitorServer.Controllers
@@ -10,35 +11,31 @@ namespace WorkMonitorServer.Controllers
     [Route("api/activities")]
     public class ActivityController : ControllerBase
     {
-        private readonly ILogger<ScreenController> logger;
-        private readonly IBaseRepository<Activity> activityrepository;
-        private readonly IBaseRepository<Client> clientrepository;
+        private readonly ILogger<ActivityController> logger;
+        private readonly ApplicationContext applicationContext;
 
-        public ActivityController(ILogger<ScreenController> logger, IBaseRepository<Activity> activityrepository,
-            IBaseRepository<Client> clientrepository)
+        public ActivityController(ILogger<ActivityController> logger, ApplicationContext applicationContext)
         {
             this.logger = logger;
-            this.activityrepository = activityrepository;
-            this.clientrepository = clientrepository;
+            this.applicationContext = applicationContext;
         }
         [HttpPost]
         public async Task Post([FromBody] WorkerInfo workerInfo)
         {
-            var result = (await clientrepository.Get()).Where(i => i.Name == workerInfo.Worker);
-            if (!result.Any())
+            Client? client = await applicationContext.Clients.Where(i => i.Name == workerInfo.Worker).FirstOrDefaultAsync();
+            if (client == default)
             {
-                await clientrepository.Add(new Client { Name = workerInfo.Worker });
+                BadRequest();
             }
-            Client client = (await clientrepository.Get()).Where(i => i.Name == workerInfo.Worker).First();
-            await activityrepository.Add(new Activity
+            await applicationContext.AddAsync(new Activity
             {
                 ActivityApplication = workerInfo.Application,
                 ActivitySite = workerInfo.Site,
-                Client = client,
+                Client = client!,
                 IdleTime = workerInfo.IdleTime,
                 WorkTime = workerInfo.WorkTime                
             });
-            await activityrepository.Save();
+            await applicationContext.SaveChangesAsync();
         }
         /*[HttpGet("{worker}")]
         public async Task<List<Activity>> Get([FromQuery(Name ="worker")] string worker)

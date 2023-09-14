@@ -1,10 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Net.Mail;
 using WorkMonitorServer.Models.DataContexts;
 using WorkMonitorServer.Models.DataEntities;
-using WorkMonitorServer.Models.Interfaces;
-using WorkMonitorServer.Models.Repositories;
 using WorkMonitorServer.Models.Services;
 
 namespace WorkMonitorServer
@@ -22,12 +18,6 @@ namespace WorkMonitorServer
             builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
             builder.Services.AddControllers(options =>
                 options.InputFormatters.Add(new ByteArrayInputFormatterService()));
-            builder.Services.AddScoped<IBaseRepository<Screen>, ScreenRepository>();
-            builder.Services.AddScoped<IBaseRepository<Activity>, ActivityRepository>();
-            builder.Services.AddScoped<IBaseRepository<Log>, LogRepository>();
-            builder.Services.AddScoped<IBaseRepository<AcceptedSite>, AcceptedSiteRepository>();
-            builder.Services.AddScoped<IBaseRepository<AcceptedApp>, AcceptedAppRepository>();
-            builder.Services.AddScoped<IBaseRepository<Client>, ClientRepository>();
             var app = builder.Build();
             if (app.Environment.IsDevelopment())
             {

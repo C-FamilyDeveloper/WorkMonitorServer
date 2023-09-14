@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WorkMonitorServer.Models.DataContexts;
 using WorkMonitorServer.Models.DataEntities;
-using WorkMonitorServer.Models.Interfaces;
 using WorkMonitorServer.Models.Services;
 using WorkMonitorTypes.Requests;
 
@@ -11,29 +12,24 @@ namespace WorkMonitorServer.Controllers
     public class ScreenController : ControllerBase
     {
         private readonly ILogger<ScreenController> logger;
-        private readonly IBaseRepository<Screen> screenrepository;
-        private readonly IBaseRepository<Client> clientrepository;
+        private readonly ApplicationContext applicationContext;
 
-        public ScreenController(ILogger<ScreenController> logger, IBaseRepository<Screen> screenrepository,
-            IBaseRepository<Client> clientrepository)
+        public ScreenController(ILogger<ScreenController> logger, ApplicationContext applicationContext)
         {
             this.logger = logger;
-            this.screenrepository = screenrepository;
-            this.clientrepository = clientrepository;
+            this.applicationContext = applicationContext;
         }
         [HttpPost]
         public async Task Post([FromBody] Screenshot screenshot)
         {
-            //ImageSaverService.Save(image);
-            var result = (await clientrepository.Get()).Where(i => i.Name == screenshot.ClientName);
-            if (!result.Any())
+            Client? client = await applicationContext.Clients.Where(i => i.Name == screenshot.ClientName).FirstOrDefaultAsync();
+            if (client == default) 
             {
-                await clientrepository.Add(new Client { Name = screenshot.ClientName });
+                BadRequest();
             }
-            Client client = (await clientrepository.Get()).Where(i => i.Name == screenshot.ClientName).First();
-            await screenrepository.Add(new Screen { Image = screenshot.Image, ScreenedClient = client,
+            await applicationContext.AddAsync(new Screen { Image = screenshot.Image, ScreenedClient = client!,
                 ScreenshotDateTime = screenshot.ScreenshotDateTime });
-            await screenrepository.Save();
+            await applicationContext.SaveChangesAsync();
         }
         /*[HttpGet]
         public IEnumerable<> Get()

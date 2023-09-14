@@ -8,7 +8,6 @@ namespace WorkMonitorServer.Models.DataContexts
 {
     public class ApplicationContext : DbContext
     {
-
         public DbSet<Screen> Screens { get; set; } = null!;
         public DbSet<Activity> Activities { get; set; } = null!;
         public DbSet<Log> Logs { get; set; } = null!;
