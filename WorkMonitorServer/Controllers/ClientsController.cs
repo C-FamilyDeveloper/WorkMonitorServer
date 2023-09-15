@@ -6,7 +6,7 @@ using WorkMonitorServer.Models.DataEntities;
 namespace WorkMonitorServer.Controllers
 {
     [ApiController]
-    [Route("api/apps")]
+    [Route("api/clients")]
     public class ClientsController : Controller
     {
         private ILogger<ClientsController> logger;
