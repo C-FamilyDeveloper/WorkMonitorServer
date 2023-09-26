@@ -1,6 +1,7 @@
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.EntityFrameworkCore;
-using WorkMonitorServer.Models.DataContexts;
-using WorkMonitorServer.Models.DataEntities;
+using WorkMonitorServer.Models.DAL.DataContexts;
+using WorkMonitorServer.Models.DAL.DataEntities;
 using WorkMonitorServer.Models.Services;
 
 namespace WorkMonitorServer

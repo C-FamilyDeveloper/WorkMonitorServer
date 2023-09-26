@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace WorkMonitorServer.Models.DataEntities
+namespace WorkMonitorServer.Models.DAL.DataEntities
 {
     public class Screen
     {

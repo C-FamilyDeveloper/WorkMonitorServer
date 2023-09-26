@@ -1,15 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WorkMonitorServer.Models.DataEntities
+namespace WorkMonitorServer.Models.DAL.DataEntities
 {
-    public class Log
+    public class AcceptedApp
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string LogMessage { get; set; }
-        public DateTime LogDateTime { get; set; }
+        public string AppName { get; set; }
         public int ClientId { get; set; }
         [ForeignKey(nameof(ClientId))]
         public Client Client { get; set; }

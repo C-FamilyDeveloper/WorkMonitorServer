@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Net.Mail;
 using System.Reflection.Emit;
-using WorkMonitorServer.Models.DataEntities;
+using WorkMonitorServer.Models.DAL.DataEntities;
 
-namespace WorkMonitorServer.Models.DataContexts
+namespace WorkMonitorServer.Models.DAL.DataContexts
 {
     public class ApplicationContext : DbContext
     {

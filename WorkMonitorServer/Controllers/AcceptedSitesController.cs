@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WorkMonitorServer.Models.DataContexts;
-using WorkMonitorServer.Models.DataEntities;
+using WorkMonitorServer.Models.DAL.DataContexts;
+using WorkMonitorServer.Models.DAL.DataEntities;
 
 namespace WorkMonitorServer.Controllers
 {

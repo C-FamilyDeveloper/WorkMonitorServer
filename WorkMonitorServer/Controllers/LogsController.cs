@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WorkMonitorServer.Models.DataContexts;
-using WorkMonitorServer.Models.DataEntities;
+using WorkMonitorServer.Models.DAL.DataContexts;
+using WorkMonitorServer.Models.DAL.DataEntities;
 
 namespace WorkMonitorServer.Controllers
 {
@@ -25,7 +25,7 @@ namespace WorkMonitorServer.Controllers
             {
                 BadRequest();
             }
-            await applicationContext.Logs.AddAsync(new Models.DataEntities.Log 
+            await applicationContext.Logs.AddAsync(new Models.DAL.DataEntities.Log 
             { 
                 LogDateTime = log.LogDateTime,
                 LogMessage = log.LogMessage,

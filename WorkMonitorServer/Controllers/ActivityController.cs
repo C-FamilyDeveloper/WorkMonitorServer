@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WorkMonitorServer.Models.DataContexts;
-using WorkMonitorServer.Models.DataEntities;
+using WorkMonitorServer.Models.DAL.DataContexts;
+using WorkMonitorServer.Models.DAL.DataEntities;
 using WorkMonitorTypes.Requests;
 
 namespace WorkMonitorServer.Controllers
@@ -23,7 +23,7 @@ namespace WorkMonitorServer.Controllers
         public async Task Post([FromBody] WorkerInfo workerInfo)
         {
             Client? client = await applicationContext.Clients.Where(i => i.Name == workerInfo.Worker).FirstOrDefaultAsync();
-            if (client == default)
+            if (client == null)
             {
                 BadRequest();
             }
@@ -31,16 +31,27 @@ namespace WorkMonitorServer.Controllers
             {
                 ActivityApplication = workerInfo.Application,
                 ActivitySite = workerInfo.Site,
+                ActivityDateTime = workerInfo.EventDateTime,
                 Client = client!,
                 IdleTime = workerInfo.IdleTime,
                 WorkTime = workerInfo.WorkTime                
             });
             await applicationContext.SaveChangesAsync();
         }
-        /*[HttpGet("{worker}")]
-        public async Task<List<Activity>> Get([FromQuery(Name ="worker")] string worker)
+
+        [HttpGet]
+        public async Task<List<WorkerInfo>> Get([FromQuery] string worker)
         {
-            return await activityrepository.Get();
-        }*/
+            return await applicationContext.Activities.AsNoTracking().Where(i => i.Client.Name == worker).Select(
+                j => new WorkerInfo
+                {
+                    Site = j.ActivitySite,
+                    Application = j.ActivityApplication,
+                    EventDateTime = j.ActivityDateTime,
+                    IdleTime = j.IdleTime,
+                    WorkTime = j.WorkTime,
+                    Worker = j.Client.Name
+                }).ToListAsync();
+        }
     }
 }

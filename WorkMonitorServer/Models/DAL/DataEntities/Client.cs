@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace WorkMonitorServer.Models.DataEntities
+namespace WorkMonitorServer.Models.DAL.DataEntities
 {
     public class Client
     {
