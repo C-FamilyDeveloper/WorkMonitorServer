@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WorkMonitorServer.Models.DAL.DataContexts;
-using WorkMonitorServer.Models.DAL.DataEntities;
-using WorkMonitorServer.Models.Services;
+using WorkMonitorServer.Models.Exceptions;
+using WorkMonitorServer.Models.Services.CRUDServices;
 using WorkMonitorTypes.Requests;
 
 namespace WorkMonitorServer.Controllers
@@ -12,29 +10,45 @@ namespace WorkMonitorServer.Controllers
     public class ScreenController : ControllerBase
     {
         private readonly ILogger<ScreenController> logger;
-        private readonly ApplicationContext applicationContext;
+        private readonly ScreenshotService screenshotService;
 
-        public ScreenController(ILogger<ScreenController> logger, ApplicationContext applicationContext)
+        public ScreenController(ILogger<ScreenController> logger, ScreenshotService screenshotService)
         {
             this.logger = logger;
-            this.applicationContext = applicationContext;
+            this.screenshotService = screenshotService;
         }
         [HttpPost]
-        public async Task Post([FromBody] Screenshot screenshot)
+        public async Task<ActionResult> Post(Screenshot screenshot)
         {
-            Client? client = await applicationContext.Clients.Where(i => i.Name == screenshot.ClientName).FirstOrDefaultAsync();
-            if (client == default) 
+            try
             {
-                BadRequest();
+                await screenshotService.AddScreenshotAsync(screenshot);
             }
-            await applicationContext.AddAsync(new Screen { Image = screenshot.Image, ScreenedClient = client!,
-                ScreenshotDateTime = screenshot.ScreenshotDateTime });
-            await applicationContext.SaveChangesAsync();
+            catch (ClientNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok();
         }
-        /*[HttpGet]
-        public IEnumerable<> Get()
+        [HttpGet]
+        public async Task<ActionResult<List<Screenshot>?>> Get(string worker)
         {
-
-        }*/
+            try
+            {
+                return await screenshotService.GetScreenshotsByClientNameAsync(worker);
+            }
+            catch (ClientNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

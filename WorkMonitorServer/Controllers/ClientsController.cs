@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WorkMonitorServer.Models.DAL.DataContexts;
+using WorkMonitorServer.Models.Services.CRUDServices;
 
 namespace WorkMonitorServer.Controllers
 {
@@ -8,20 +7,27 @@ namespace WorkMonitorServer.Controllers
     [Route("api/clients")]
     public class ClientsController : Controller
     {
-        private ILogger<ClientsController> logger;
-        private readonly ApplicationContext applicationContext;
+        private readonly ILogger<ClientsController> logger;
+        private readonly ClientService clientService;
 
         
-        public ClientsController (ILogger<ClientsController> logger, ApplicationContext applicationContext)
+        public ClientsController (ILogger<ClientsController> logger, ClientService clientService)
         {
             this.logger = logger;
-            this.applicationContext = applicationContext;
+            this.clientService = clientService;
         }
 
         [HttpGet]
-        public async Task<List<string>> Get()
+        public async Task<ActionResult<List<string>?>> Get()
         {
-            return await applicationContext.Clients.AsNoTracking().Select(i => i.Name).ToListAsync();         
+            try
+            {
+                return Ok(await clientService.GetClientsNamesAsync());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }      
         }
 
     }

@@ -1,57 +1,67 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WorkMonitorServer.Models.DAL.DataContexts;
-using WorkMonitorServer.Models.DAL.DataEntities;
+﻿using Microsoft.AspNetCore.Mvc;
+using WorkMonitorServer.Models.Exceptions;
+using WorkMonitorServer.Models.Services.CRUDServices;
 using WorkMonitorTypes.Requests;
 
 namespace WorkMonitorServer.Controllers
 {
     [ApiController]
-    [Route("api/activities")]
+    [Route("api/activities/[action]")]
     public class ActivityController : ControllerBase
     {
         private readonly ILogger<ActivityController> logger;
-        private readonly ApplicationContext applicationContext;
+        private readonly ActivityService activityService;
 
-        public ActivityController(ILogger<ActivityController> logger, ApplicationContext applicationContext)
+        public ActivityController(ILogger<ActivityController> logger, ActivityService activityService)
         {
             this.logger = logger;
-            this.applicationContext = applicationContext;
+            this.activityService = activityService;
         }
         [HttpPost]
-        public async Task Post([FromBody] WorkerInfo workerInfo)
+        public async Task<ActionResult> Post(WorkerInfo workerInfo)
         {
-            Client? client = await applicationContext.Clients.Where(i => i.Name == workerInfo.Worker).FirstOrDefaultAsync();
-            if (client == null)
+            try
             {
-                BadRequest();
+                await activityService.AddActivityAsync(workerInfo);
             }
-            await applicationContext.AddAsync(new Activity
+            catch (ClientNotFoundException ex)
             {
-                ActivityApplication = workerInfo.Application,
-                ActivitySite = workerInfo.Site,
-                ActivityDateTime = workerInfo.EventDateTime,
-                Client = client!,
-                IdleTime = workerInfo.IdleTime,
-                WorkTime = workerInfo.WorkTime                
-            });
-            await applicationContext.SaveChangesAsync();
+                return NotFound(ex.Message);    
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok();
         }
 
         [HttpGet]
-        public async Task<List<WorkerInfo>> Get([FromQuery] string worker)
+        public async Task<ActionResult<List<WorkerInfo>?>> GetByName(string clientName)
         {
-            return await applicationContext.Activities.AsNoTracking().Where(i => i.Client.Name == worker).Select(
-                j => new WorkerInfo
-                {
-                    Site = j.ActivitySite,
-                    Application = j.ActivityApplication,
-                    EventDateTime = j.ActivityDateTime,
-                    IdleTime = j.IdleTime,
-                    WorkTime = j.WorkTime,
-                    Worker = j.Client.Name
-                }).ToListAsync();
+            try
+            {
+                return await activityService.GetClientActivitiesByClientNameAsync(clientName);
+            }
+            catch (ClientNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet]
+        public async Task<ActionResult<List<WorkerInfo>?>> GetAll()
+        {
+            try
+            {
+                return await activityService.GetAllActivitiesAsync();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

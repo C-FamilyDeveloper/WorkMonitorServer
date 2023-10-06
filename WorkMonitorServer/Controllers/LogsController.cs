@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WorkMonitorServer.Models.DAL.DataContexts;
-using WorkMonitorServer.Models.DAL.DataEntities;
+using WorkMonitorServer.Models.Exceptions;
+using WorkMonitorServer.Models.Services.CRUDServices;
 
 namespace WorkMonitorServer.Controllers
 {
@@ -9,28 +8,30 @@ namespace WorkMonitorServer.Controllers
     [Route("api/logs")]
     public class LogsController : Controller
     {
-        private ILogger<LogsController> logger;
-        private readonly ApplicationContext applicationContext;
+        private readonly ILogger<LogsController> logger;
+        private readonly LogService logService;
 
-        public LogsController(ILogger<LogsController> logger, ApplicationContext applicationContext)
+        public LogsController(ILogger<LogsController> logger, LogService logService)
         {
             this.logger = logger;
-            this.applicationContext = applicationContext;
+            this.logService = logService;
         }
         [HttpPost]
-        public async Task Post(WorkMonitorTypes.Requests.Log log)
+        public async Task<ActionResult> Post(WorkMonitorTypes.Requests.Log log)
         {
-            Client? client = await applicationContext.Clients.Where(i => i.Name == log.ClientName).FirstOrDefaultAsync();
-            if (client == default)
+            try
             {
-                BadRequest();
+                await logService.AddLogAsync(log);
             }
-            await applicationContext.Logs.AddAsync(new Models.DAL.DataEntities.Log 
-            { 
-                LogDateTime = log.LogDateTime,
-                LogMessage = log.LogMessage,
-                Client = client!
-            });
+            catch (ClientNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok();
         }
     }
 }

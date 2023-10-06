@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WorkMonitorServer.Models.DAL.DataContexts;
-using WorkMonitorServer.Models.DAL.DataEntities;
+using WorkMonitorServer.Models.Exceptions;
+using WorkMonitorServer.Models.Services.CRUDServices;
 
 namespace WorkMonitorServer.Controllers
 {
@@ -9,27 +8,29 @@ namespace WorkMonitorServer.Controllers
     [Route("api/apps")]
     public class AcceptedAppsController : ControllerBase
     {
-        private ILogger<AcceptedAppsController> logger;
-        private readonly ApplicationContext applicationContext;
-        public AcceptedAppsController (ILogger<AcceptedAppsController> logger, ApplicationContext applicationContext)
+        private readonly ILogger<AcceptedAppsController> logger;
+        private readonly AcceptedAppService acceptedAppService;
+        public AcceptedAppsController (ILogger<AcceptedAppsController> logger, AcceptedAppService acceptedAppService)
         {
             this.logger = logger;
-            this.applicationContext = applicationContext;
+            this.acceptedAppService = acceptedAppService;
         }
         [HttpPost]
-        public async Task Post([FromBody] WorkMonitorTypes.Requests.AcceptedApp app)
+        public async Task<ActionResult> Post(WorkMonitorTypes.Requests.AcceptedApp app)
         {
-            Client? client = await applicationContext.Clients.Where(i => i.Name == app.UserName).FirstOrDefaultAsync();
-            if (client == default)
+            try
             {
-                BadRequest();
+                await acceptedAppService.AddAppAsync(app);
             }
-            await applicationContext.AddAsync(new AcceptedApp
+            catch (ClientNotFoundException ex)
             {
-                AppName = app.AppName,
-                Client = client
-            });
-            await applicationContext.SaveChangesAsync();
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok();
         }
 
     }

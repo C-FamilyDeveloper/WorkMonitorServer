@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq.Expressions;
+using WorkMonitorServer.Models.DAL.DataContexts;
+using WorkMonitorServer.Models.DAL.DataEntities;
 
 namespace WorkMonitorServer.Models.Extensions
 {
@@ -13,7 +15,7 @@ namespace WorkMonitorServer.Models.Extensions
             {
                 set.Add(entity);
             }
-            return set.Find(predicate)!;
+            return set.Where(predicate).First();
         }
         public static async Task<T> AddIfNotExistAsync<T>(this DbSet<T> set, T entity, Expression<Func<T, bool>> predicate) where T : class
         {
@@ -22,7 +24,12 @@ namespace WorkMonitorServer.Models.Extensions
             {
                 await set.AddAsync(entity);
             }
-            return await set.FindAsync(predicate)!;
+            return await set.Where(predicate).FirstAsync();
         }
+        public static async Task<bool> IsClientExistsAsync(this DbSet<Client> set, string clientName)
+        {
+            return await set.AsNoTracking().AnyAsync(i => i.Name == clientName);
+        }
+
     }
 }
