@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WorkMonitorServer.Models.DAL.DataContexts;
 using WorkMonitorServer.Models.DAL.DataEntities;
 using WorkMonitorServer.Models.Services;
+using WorkMonitorServer.Models.Services.CRUDServices;
 
 namespace WorkMonitorServer
 {
@@ -19,6 +20,12 @@ namespace WorkMonitorServer
             builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
             builder.Services.AddControllers(options =>
                 options.InputFormatters.Add(new ByteArrayInputFormatterService()));
+            builder.Services.AddScoped<AcceptedAppService>();
+            builder.Services.AddScoped<AcceptedSiteService>();
+            builder.Services.AddScoped<LogService>();
+            builder.Services.AddScoped<ScreenshotService>();
+            builder.Services.AddScoped<ActivityService>();
+            builder.Services.AddScoped<ClientService>();
             var app = builder.Build();
             if (app.Environment.IsDevelopment())
             {
