@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WorkMonitorServer.Models.DAL.DataEntities
@@ -11,6 +12,7 @@ namespace WorkMonitorServer.Models.DAL.DataEntities
         public string AppName { get; set; }
         public int ClientId { get; set; }
         [ForeignKey(nameof(ClientId))]
+        [DeleteBehavior(DeleteBehavior.ClientCascade)]
         public Client Client { get; set; }
     }
 }
