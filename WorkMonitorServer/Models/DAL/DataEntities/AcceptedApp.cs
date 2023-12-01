@@ -13,6 +13,6 @@ namespace WorkMonitorServer.Models.DAL.DataEntities
         public int ClientId { get; set; }
         [ForeignKey(nameof(ClientId))]
         [DeleteBehavior(DeleteBehavior.ClientCascade)]
-        public Client Client { get; set; }
+        public virtual Client Client { get; set; }
     }
 }

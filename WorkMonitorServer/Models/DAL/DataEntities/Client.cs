@@ -9,10 +9,10 @@ namespace WorkMonitorServer.Models.DAL.DataEntities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<Screen> Screens { get; set; }
-        public List<Activity> Activities { get; set; }
-        public List<Log> Logs { get; set; }
-        public List<AcceptedApp> AcceptedApps { get; set; }
-        public List<AcceptedSite> AcceptedSites { get; set; }
+        public virtual List<Screen> Screens { get; set; }
+        public virtual List<Activity> Activities { get; set; }
+        public virtual List<Log> Logs { get; set; }
+        public virtual List<AcceptedApp> AcceptedApps { get; set; }
+        public virtual List<AcceptedSite> AcceptedSites { get; set; }
     }
 }
