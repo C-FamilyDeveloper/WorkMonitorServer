@@ -17,7 +17,7 @@ namespace WorkMonitorServer
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             string connection = builder.Configuration.GetConnectionString("Connection")!;
-            builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
+            builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection).UseLazyLoadingProxies());
             builder.Services.AddControllers(options =>
                 options.InputFormatters.Add(new ByteArrayInputFormatterService()));
             builder.Services.AddScoped<AcceptedAppService>();
